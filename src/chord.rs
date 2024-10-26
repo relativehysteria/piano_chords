@@ -1,6 +1,7 @@
 use crate::Rng;
 
-pub const ROOTS: [char; 7] = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+pub const ROOTS: [&'static str; 12] =
+    ["A", "A♯", "B", "C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯"];
 
 pub struct ChordType {
     /// Interval pattern for base triad or 7th chord
@@ -51,7 +52,7 @@ pub const CHORD_TYPES: [ChordType; 8] = [
 pub const EXTENSIONS: [&'static str; 3] = ["9", "11", "13"];
 
 /// Randomly selects a root note
-pub fn random_root(rng: &mut Rng) -> char {
+pub fn random_root(rng: &mut Rng) -> &'static str {
     ROOTS[rng.next() % ROOTS.len()]
 }
 
