@@ -2,7 +2,12 @@ pub struct Rng(usize);
 
 impl Rng {
     pub fn new(seed: usize) -> Self {
-        Self(seed)
+        let mut rng = Self(seed);
+
+        // Couple initial runs to get around shitty seeds
+        (0..32).for_each(|_| { rng.next(); });
+
+        rng
     }
 
     pub fn next(&mut self) -> usize {
