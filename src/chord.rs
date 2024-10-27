@@ -1,7 +1,7 @@
 use crate::Rng;
 
-pub const ROOTS: [&'static str; 12] =
-    ["A", "A♯", "B", "C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯"];
+pub const ROOTS: &'static [&'static str] =
+    &["A", "A♯", "B", "C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯"];
 
 pub struct ChordType {
     /// Interval pattern for base triad or 7th chord
@@ -21,7 +21,7 @@ pub struct ChordType {
 }
 
 /// Various chord types with corresponding intervals and names
-pub const CHORD_TYPES: [ChordType; 8] = [
+pub const CHORD_TYPES: &'static [ChordType] = &[
     ChordType { intervals: (4, 3, 4), name: "Major",
                 base_suffix: "maj7", allows_extensions: true,
                 allowed_alterations: &["♯11", "♭13"] },
