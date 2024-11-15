@@ -69,30 +69,12 @@ pub fn random_chord(rng: &mut Rng, complex: bool) -> String {
 
     // If complex chords are allowed
     // and the chord type permits extensions or alterations
-    if complex && (chord_type.allows_extensions ||
-            !chord_type.allowed_alterations.is_empty()) {
-        // Optionally add an extension (e.g., 9th, 11th, 13th)
-        if chord_type.allows_extensions {
-            let extension = EXTENSIONS[rng.next() % EXTENSIONS.len()];
-            chord_str.push_str(&format!(" {}", extension));
+    if complex {
+        if let Some(ext) = add_extensions(rng, chord_type) {
+            chord_str.push_str(&ext);
         }
-
-        // Optionally add up to two alterations if allowed for this chord type
-        if !chord_type.allowed_alterations.is_empty() {
-            let num_alterations = rng.next() % 3; // 0 to 2 alterations
-            let mut alterations = Vec::new();
-            for _ in 0..num_alterations {
-                let alteration = chord_type.allowed_alterations[
-                    rng.next() % chord_type.allowed_alterations.len()];
-                if !alterations.contains(&alteration) {
-                    alterations.push(alteration);
-                }
-            }
-            if !alterations.is_empty() {
-                chord_str.push_str(" (");
-                chord_str.push_str(&alterations.join(", "));
-                chord_str.push(')');
-            }
+        if let Some(alt) = add_alterations(rng, chord_type) {
+            chord_str.push_str(&alt);
         }
     }
 
@@ -100,4 +82,34 @@ pub fn random_chord(rng: &mut Rng, complex: bool) -> String {
     // "Diminished Major".len() == 16
     format!("{:>16} | {:?} | {}",
             chord_type.name, chord_type.intervals, chord_str)
+}
+
+fn add_extensions(rng: &mut Rng, chord_type: &ChordType) -> Option<String> {
+    if chord_type.allows_extensions {
+        let extension = EXTENSIONS[rng.next() % EXTENSIONS.len()];
+        Some(format!(" {}", extension))
+    } else {
+        None
+    }
+}
+
+fn add_alterations(rng: &mut Rng, chord_type: &ChordType) -> Option<String> {
+    if chord_type.allowed_alterations.is_empty() {
+        return None;
+    }
+
+    let num_alterations = rng.next() % 3; // 0 to 2 alterations
+    let mut alterations = Vec::new();
+    for _ in 0..num_alterations {
+        let alteration = chord_type.allowed_alterations[
+            rng.next() % chord_type.allowed_alterations.len()];
+        if !alterations.contains(&alteration) {
+            alterations.push(alteration);
+        }
+    }
+    if alterations.is_empty() {
+        None
+    } else {
+        Some(format!(" ({})", alterations.join(", ")))
+    }
 }
